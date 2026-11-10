@@ -1,0 +1,6 @@
+# Starting point only. Pin versions using the official Airflow constraints
+# file for your Python version and deployment method before installation.
+apache-airflow
+apache-airflow-providers-snowflake
+pandas
+pytest
