@@ -1,106 +1,43 @@
 # Cloud Data Warehouse & ETL Orchestration Platform
 
-**Technologies:** Apache Airflow | Snowflake | Python | SQL | PySpark | Delta Lake
+**Apache Airflow | Snowflake | Python | SQL | PySpark | Delta Lake**
 
-## Project Overview
-
-This project demonstrates the design of a cloud-based data warehouse pipeline using Apache Airflow for workflow orchestration and Snowflake for analytical data storage and transformation.
-
-The pipeline is designed to ingest source data, perform data validation and transformation, load warehouse tables, and maintain historical records using Slowly Changing Dimension (SCD) Type 2.
+## Business scenario
+Create an orchestrated analytical data pipeline that loads customer data into a cloud warehouse, validates source records, and maintains historical customer attributes using Slowly Changing Dimension (SCD) Type 2.
 
 ## Architecture
-
-```text
-Source Files (CSV / JSON)
-          |
-          v
-   Apache Airflow
-   (Orchestration)
-          |
-          v
-    Data Ingestion
-          |
-          v
-   Snowflake Staging
-          |
-          v
- Data Validation & Transformation
-          |
-          v
-   Dimension & Fact Tables
-          |
-          v
-  Analytics / Reporting
+```mermaid
+flowchart LR
+ SRC[CSV source files] --> AF[Apache Airflow DAG]
+ AF --> STG[Snowflake staging]
+ STG --> VAL[Validation and transformation]
+ VAL --> DIM[Dimension and fact models]
+ DIM --> BI[Analytics and reporting]
 ```
 
-## Key Components
+## Repository structure
+- `dags/warehouse_pipeline.py`: starter Airflow DAG.
+- `sql/01_create_objects.sql`: staging and dimension DDL.
+- `sql/02_scd_type2_merge.sql`: illustrative SCD Type 2 SQL.
+- `data/customers_sample.csv`: synthetic source data.
+- `docs/architecture.md`: design and operational notes.
+- `tests/TEST_PLAN.md`: validation checklist.
+- `requirements.txt`: dependency starting point.
 
-### 1. Apache Airflow
-- Workflow orchestration using DAGs.
-- Task dependencies and scheduling.
-- Retry mechanisms and failure handling.
-- Pipeline monitoring and execution logs.
+## Setup
+1. Install an Apache Airflow release using its official constraints file for your Python version.
+2. Install a Snowflake provider version compatible with that Airflow release.
+3. Configure an Airflow connection named `snowflake_default` through the UI or a secrets backend.
+4. Create a development database, schema, warehouse and least-privilege role in Snowflake.
+5. Review and execute the SQL setup script in the development schema.
+6. Place the DAG in the configured Airflow DAG folder and validate it before triggering.
 
-### 2. Snowflake
-- Database, schema, warehouse and table management.
-- Staging and analytical data models.
-- SQL-based transformations.
-- Incremental data processing.
-- Slowly Changing Dimension (SCD) Type 2.
+Never commit passwords, private keys, account identifiers or tokens. Pin compatible versions for your environment before deployment.
 
-### 3. Python and SQL
-- Data ingestion and processing.
-- Data validation and transformation.
-- SQL-based warehouse operations.
-- Data quality checks.
+## Current implementation status
+This repository contains an initial DAG, SQL examples, synthetic CSV data and design documentation. **A live Airflow deployment, authenticated Snowflake connection, successful end-to-end run, SCD2 validation and automated test results have not yet been verified.** These are planned implementation and validation tasks.
 
-### 4. Data Engineering Concepts
-- ETL/ELT pipeline design.
-- Incremental loading.
-- Data warehouse modelling.
-- Idempotent processing.
-- Error handling and data reconciliation.
+## Planned enhancements
+Incremental loading with watermarks, staging ingestion, data quality checks, audit logging, idempotent reruns, SCD2 edge-case handling, retries/alerts, CI/CD and execution evidence.
 
-## Repository Structure
-
-```text
-cloud-data-warehouse-airflow-snowflake/
-│
-├── dags/
-│   └── warehouse_pipeline.py
-│
-├── sql/
-│   ├── 01_create_objects.sql
-│   └── 02_scd_type2_merge.sql
-│
-├── data/
-│   └── customers_sample.csv
-│
-├── docs/
-│   └── architecture.md
-│
-├── tests/
-│   └── TEST_PLAN.md
-│
-├── requirements.txt
-└── README.md
-```
-
-## Implementation Status
-
-This repository currently contains the initial project scaffold, sample data, architecture documentation, starter Airflow DAG and SQL examples.
-
-The live Airflow and Snowflake integration, end-to-end execution, and testing are planned validation steps and should not be considered completed yet.
-
-## Future Enhancements
-
-- Implement end-to-end ingestion.
-- Add incremental loading with watermark logic.
-- Implement and test SCD Type 2.
-- Add data quality and reconciliation checks.
-- Configure Airflow monitoring and alerting.
-- Add automated testing and CI/CD.
-
----
-
-**Note:** This is an independent learning and portfolio project using synthetic sample data. No employer or client data, credentials, or proprietary code are included.
+All included sample data is synthetic. No client/employer code or confidential data is included.
